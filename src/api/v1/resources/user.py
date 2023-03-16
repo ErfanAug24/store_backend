@@ -9,6 +9,8 @@ from flask_jwt_extended import (create_access_token,
 from src.api.v1.schemas.schemas import UserRegistrationSchema
 from src.api.v1.models.user import UserModel
 from werkzeug.security import check_password_hash, generate_password_hash
+from src.extention_tools.send_email import send_email
+import os
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
@@ -22,9 +24,12 @@ class UserRegister:
         user = UserModel(user_data["username"],
                          user_data["email"],
                          generate_password_hash(user_data["password"]))
+        token = "Super Secret Key"
         db.session.add(user)
         db.session.commit()
-        
+        send_email("احراز هویت شما", user_data["email"], body=f"""لطفا برای تایید صحت ایمیل خود بر لینک زیر کلیک کرده
+        https://VpnShop.ir/authenticating/{token}  واگر شما نقشی در ارسال این ایمیل نداشته اید . این پیام را نادیده بگیرید""")
+        return {"message": "User created successfully."}, 201
 
 
 class UserLogin:
