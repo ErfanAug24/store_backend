@@ -15,3 +15,10 @@ class Config(object):
     API_TITLE = os.getenv("API_TITLE")
     API_VERSION = os.getenv("API_VERSION")
     OPENAPI_VERSION = "3.0.2"
+
+    MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+    MAIL_USERNAME = os.getenv("MAIL_USERNAME")
+    MAIL_PORT = os.getenv("MAIL_PORT")
+    MAIL_USE_TSL = os.getenv("MAIL_USE_TSL")
+    MAIL_USE_SSL = os.getenv("MAIL_USE_SSL")
+    MAIL_SERVER = os.getenv("MAIL_SERVER")

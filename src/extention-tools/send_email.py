@@ -1,17 +1,12 @@
-import requests
-import smtplib
-import ssl
-import os
-from dotenv import load_dotenv
-
-port = 465
-context = ssl.create_default_context()
-load_dotenv()
+from src.email import mail
+from flask_mail import Message
+from datetime import datetime
 
 
-def send_email(port, password, context, receiver_email, message):
-    with smtplib.SMTP_SSL("smtp.gamil.com",
-                          port=port,
-                          context=context) as server:
-        server.login(os.getenv("EMAIL"), password)
-        server.sendmail(os.getenv("EMAIL"), receiver_email, message)
+def send_email(subject, sender, receiver, body):
+    msg = Message(subject, sender=sender, recipients=receiver, body=body)
+    mail.send(msg)
+    return {'Status': 'Sent',
+            'to': receiver,
+            'from': sender,
+            'at': f'{datetime.utcnow}'}

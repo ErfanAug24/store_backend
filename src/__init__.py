@@ -4,6 +4,7 @@ from flask_smorest import Api
 from src.db import db
 from src.schema import ma
 from flask_migrate import Migrate
+from src.email import mail
 # from src.rq_db import rq
 
 
@@ -19,6 +20,9 @@ def create_app(configClass):
     # setting schema
     ma.init_app(app)
 
+    # setting mail
+    mail.init_app(app)
+    
     # setting redis and queue
     # rq.init_app(app)
 
