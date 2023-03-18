@@ -20,7 +20,8 @@ blp = Blueprint("Users", "users", description="Operations on users")
 class UserRegister(MethodView):
     @blp.arguments(UserRegistrationSchema)
     def post(self, user_data):
-        if UserModel.find_by_username(user_data["username"]):
+        user = UserModel.find_by_username(user_data["username"])
+        if user:
             abort(409, message="This username is already exist.")
         user = UserModel(user_data["username"],
                          user_data["email"],

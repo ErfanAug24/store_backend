@@ -18,8 +18,10 @@ def get_random_string(length):
 
 
 while True:
-
     base_api_secret_key = get_random_string(
         int(os.getenv("API_LOCKER_LENGHT")))
-    print(base_api_secret_key)
     time.sleep(10)
+
+
+
+# berlan bazar bozorg 
