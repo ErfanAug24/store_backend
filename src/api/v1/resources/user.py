@@ -10,12 +10,13 @@ from src.api.v1.schemas.schemas import UserRegistrationSchema, UserSchema
 from src.api.v1.models.user import UserModel
 from werkzeug.security import check_password_hash, generate_password_hash
 from src.extention_tools.send_email import send_email
-import os
+from src.api.api_locker.safe_link_generator import base_api_secret_key
+
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
 
-@blp.route('/register')
+@blp.route(f'{base_api_secret_key}/register')
 class UserRegister(MethodView):
     @blp.arguments(UserRegistrationSchema)
     def post(self, user_data):
@@ -26,13 +27,12 @@ class UserRegister(MethodView):
                          generate_password_hash(user_data["password"]))
         token = "Super Secret Key"
         user.save()
-        send_email("احراز هویت شما", user_data["email"], body=f"""لطفا برای تایید صحت ایمیل خود بر لینک زیر کلیک کرده
-        https://VpnShop.ir/authenticating/{token}  واگر شما نقشی در ارسال این ایمیل نداشته اید . این پیام را نادیده بگیرید""")
+        # send_email("احراز هویت شما", user_data["email"], body=f"""لطفا برای تایید صحت ایمیل خود بر لینک زیر کلیک کرده
+        # https://VpnShop.ir/authenticating/{token}  واگر شما نقشی در ارسال این ایمیل نداشته اید . این پیام را نادیده بگیرید""")
         return {"message": "User created successfully."}, 201
 
 
-
-@blp.route('/login')
+@blp.route(f'{base_api_secret_key}/login')
 class UserLogin(MethodView):
     @blp.arguments(UserSchema)
     def post(self, user_data):
@@ -45,7 +45,7 @@ class UserLogin(MethodView):
         abort(401, message="Invalid credentials")
 
 
-@blp.route('/logout')
+@blp.route(f'{base_api_secret_key}/logout')
 class UserLogout(MethodView):
     @jwt_required()
     def post(self):
@@ -55,11 +55,11 @@ class UserLogout(MethodView):
         return {'message': 'The user is successfully logged out.'}, 200
 
 
-@blp.route('/user/<int:user_id>')
+@blp.route(f'{base_api_secret_key}/user/<int:user_id>')
 class User(MethodView):
     @blp.response(200, UserSchema)  # i didn't get it
     def get(self, user_id):
-        return UserModel.query.get_or_404(id=user_id)
+        return UserModel.query.filter_by(id=user_id).first()
 
     def delete(self, user_id):
         user = UserModel.find_by_id(user_id)
@@ -67,7 +67,7 @@ class User(MethodView):
         return {"message": "User deleted ."}, 200
 
 
-@blp.route('/refresh')
+@blp.route(f'{base_api_secret_key}/refresh')
 class TokenRefresh(MethodView):
     @jwt_required(refresh=True)
     def post(self):

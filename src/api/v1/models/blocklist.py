@@ -2,7 +2,7 @@ from src.db import db
 from typing import Dict, List, Union
 from datetime import datetime
 
-BlocklistJSON = Dict[str]
+BlocklistJSON = Dict[str,str]
 
 
 class BlocklistModel(db.Model):

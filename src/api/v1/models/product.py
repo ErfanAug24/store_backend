@@ -3,15 +3,15 @@ from datetime import datetime
 from typing import Dict, List
 
 
-ProductJSON = Dict[int,str]
+ProductJSON = Dict[int, str]
 
 
 class ProductModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Coulmn(db.String(100), nullable=False, unique=True)
+    name = db.Column(db.String(100), nullable=False, unique=True)
     price = db.Column(db.Integer, nullable=False, default=0)
-    description = db.Column(db.Integer(500), nullable=False)
-    number_of = db.Column(db.Integer, nullable=False)
+    description = db.Column(db.String(500), nullable=False)
+    number_of = db.Column(db.Integer, nullable=False, default=0)
     picture = db.Column(db.String(50), nullable=False, default="default.jpeg")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
