@@ -22,3 +22,18 @@ class RegisterProductSchema(ProductSchema):
     name = fields.Str(required=True)
     price = fields.Str(required=True)
     description = fields.Str(required=True)
+
+
+user_schema = UserSchema()
+user_schemas = UserSchema(many=True)
+
+user_register_schema = UserRegistrationSchema()
+user_register_schemas = UserRegistrationSchema(many=True)
+
+
+product_schema = ProductSchema()
+products_schema = ProductSchema(many=True)
+
+
+product_registration_schema = RegisterProductSchema()
+product_registration_schemas = RegisterProductSchema(many=True)

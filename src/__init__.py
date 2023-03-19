@@ -5,8 +5,8 @@ from src.db import db
 from src.schema import ma
 from flask_migrate import Migrate
 from src.email import mail
-from src.api.v1.resources.user import blp as UserBlueprint
-from src.api.v1.resources.product import blp as ProductBlueprint
+from src.api.v1.resources.user import blp as UserApiBlueprint
+from src.api.v1.resources.product import blp as ProductApiBlueprint
 # from src.rq_db import rq
 
 
@@ -30,6 +30,6 @@ def create_app(configClass):
     # rq.init_app(app)
 
     # setting api
-    api.register_blueprint(UserBlueprint)
-    api.register_blueprint(ProductBlueprint)
+    api.register_blueprint(UserApiBlueprint)
+    api.register_blueprint(ProductApiBlueprint)
     return app

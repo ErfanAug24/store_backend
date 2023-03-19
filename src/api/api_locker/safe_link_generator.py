@@ -17,11 +17,10 @@ def get_random_string(length):
     return safe_link
 
 
-while True:
-    base_api_secret_key = get_random_string(
-        int(os.getenv("API_LOCKER_LENGHT")))
-    time.sleep(10)
+# while True:
+base_api_secret_key = get_random_string(
+    int(os.getenv("API_LOCKER_LENGHT")))
+# time.sleep(10)
 
 
-
-# berlan bazar bozorg 
+# berlan bazar bozorg
