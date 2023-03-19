@@ -7,11 +7,12 @@ from flask_migrate import Migrate
 from src.email import mail
 from src.api.v1.resources.user import blp as UserApiBlueprint
 from src.api.v1.resources.product import blp as ProductApiBlueprint
+from src.frontend_api.Users.routes import blp as UserBlueprint
 # from src.rq_db import rq
 
 
 def create_app(configClass):
-    app = Flask(__name__)
+    app = Flask(__name__,template_folder="templates")
     app.config.from_object(configClass)
     # setting api
     api = Api(app)
@@ -32,4 +33,5 @@ def create_app(configClass):
     # setting api
     api.register_blueprint(UserApiBlueprint)
     api.register_blueprint(ProductApiBlueprint)
+    app.register_blueprint(UserBlueprint)
     return app

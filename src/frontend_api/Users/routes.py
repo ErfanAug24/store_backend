@@ -1,15 +1,19 @@
-from flask import redirect, url_for, request, jsonify, render_template
-from flask_smorest import Blueprint
-from flask.views import MethodView
+from flask import redirect, url_for, request, jsonify, render_template,Blueprint
 from flask_jwt_extended import jwt_required
-from src.api.v1.resources.user import UserLogin, UserLogout, UserRegister, User
+from src.api.v1.resources.user import UserRegisterApi
 
-blp = Blueprint('users', __name__)
+blp = Blueprint('blp', __name__,template_folder="templates")
 user_data = {"username": "erfan",
              "password": "261384",
              "email": "eshirkhanei261384@gmail.com"}
 
+user_register = UserRegisterApi()
 
-@blp.route('/get')
-def get():
-    return User.get(user_data,2)
+
+@blp.route('/test')
+def test():
+    return render_template('base.html')
+
+@blp.route('/signup', methods=["GET", "POST"])
+def SignUp():
+    return render_template('base.html')
