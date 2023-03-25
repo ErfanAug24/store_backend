@@ -1,5 +1,5 @@
 {% extends "base.html" %} {% block content %}
-<form action="{{ url_for('blp.SignUp') }}" method="post">
+<form action="{{ url_for('Users.SignIn') }}" method="post">
   <div class="form-group">
     <label for="exampleInputEmail1">Email address</label>
     <input type="username" class="form-control" name="username" id="username" aria-describedby="emailHelp" placeholder="Enter username">

@@ -6,3 +6,7 @@ USER_UPDATE = "The user is successfully updated.", 200
 PERMISSION = "Invalid credentials.", 401
 USER_LOGIN = "The user is successfully logged in.", 200
 USER_LOGOUT = "The user is successfully logged out.", 200
+WRONG_DATA="wrong username or password."
+SOMETHING_WENT_WRONG="Please try Again Later . Something went wrong."
+TYPE_PASSWORD="Please type password again."
+ACCOUNT_REQUIRED="You don't have any account . please make one."

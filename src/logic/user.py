@@ -12,6 +12,7 @@ from flask_jwt_extended import (create_access_token,
                                 get_current_user,
                                 unset_access_cookies)
 from flask import jsonify
+import datetime
 from src.logic.error_handler.error_syntax import *
 
 
@@ -22,9 +23,9 @@ class UserRegisteration(UserModel):
         if user:
             return {'message': USER_CONFLICT}
 
-        user = cls(user_json["username"],
-                   user_json["email"],
-                   generate_password_hash(user_json["password"]))
+        user = cls(user_json.get("username"),
+                   user_json.get("email"),
+                   generate_password_hash(user_json.get("password")))
 
         token = "SIPER SECRET KEY"
         user.save()
@@ -59,10 +60,11 @@ class UserLogin(UserModel):
     def login(cls, user_json):
         user = cls.find_by_username(user_json.get("username"))
         if user and check_password_hash(user.password, user_json.get("password")):
-            access_token = create_access_token(identity=user.id, fresh=True)
+            access_token = create_access_token(
+                identity=user.id, fresh=datetime.timedelta(minutes=15), additional_claims={"email": user.email})
             refresh_token = create_refresh_token(identity=user.id)
             return {'access_token': access_token,
-                    'refresh_token': refresh_token}, 200
+                    'refresh_token': refresh_token}
         return {'message': PERMISSION}
 
 
