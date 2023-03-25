@@ -8,6 +8,7 @@ from src.email import mail
 from src.api.v1.resources.user import blp as UserApiBlueprint
 from src.api.v1.resources.product import blp as ProductApiBlueprint
 from src.frontend_api.Users.routes import blp as UserBlueprint
+from src.frontend_api.Store.routes import blp as StoreBlueprint
 # from src.rq_db import rq
 
 
@@ -34,4 +35,5 @@ def create_app(configClass):
     api.register_blueprint(UserApiBlueprint)
     api.register_blueprint(ProductApiBlueprint)
     app.register_blueprint(UserBlueprint)
+    app.register_blueprint(StoreBlueprint)
     return app

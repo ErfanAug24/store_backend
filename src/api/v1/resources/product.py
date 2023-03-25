@@ -5,7 +5,7 @@ from src.api.v1.schemas.schemas import ProductSchema, RegisterProductSchema
 from datetime import datetime
 from flask_jwt_extended import jwt_required
 
-blp = Blueprint("Products", 'Products', description="Operations on stores")
+blp = Blueprint("ProductsApi", 'productsapi', description="Operations on stores")
 
 
 @blp.route('/product/<string:product_id>')

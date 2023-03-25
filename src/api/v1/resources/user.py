@@ -8,16 +8,16 @@ from flask_jwt_extended import (create_access_token,
                                 jwt_required)
 from src.api.v1.schemas.schemas import UserRegistrationSchema, UserSchema
 from src.api.api_locker.safe_link_generator import base_api_secret_key
-from src.logic.user import UserLogin, UserRegisteration, User
+from src.logic.user import UserLogin, UserRegisteration, User, UserLogout, TokenRefresh
+from flask import jsonify
 
-blp = Blueprint("Users", "users", description="Operations on users")
+blp = Blueprint("UsersApi", "usersapi", description="Operations on users")
 
 
 @blp.route(f'/register')
 class UserRegisterApi(MethodView):
     @blp.arguments(UserRegistrationSchema)
     def post(self, user_data):
-        print(type(user_data))
         return UserRegisteration.register(user_data)
 
 
@@ -32,15 +32,13 @@ class UserLoginApi(MethodView):
 class UserLogoutApi(MethodView):
     @jwt_required()
     def post(self):
-        jti = get_jwt()['jti']
-        Revoaked_Token = BlocklistModel(jti, 'User Logging out.')
-        Revoaked_Token.save()
-        return {'message': 'The user is successfully logged out.'}, 200
+        resp = UserLogout.logout(identity=get_jwt_identity())
+        return resp
 
 
 @blp.route(f'/user/<int:user_id>')
 class UserApi(MethodView):
-    @blp.response(200, UserSchema)  # i didn't get it
+    @blp.response(200, UserSchema)
     def get(self, user_id):
         return User.get_user(user_id)
 
@@ -52,10 +50,5 @@ class UserApi(MethodView):
 class TokenRefreshApi(MethodView):
     @jwt_required(refresh=True)
     def post(self):
-        current_user = get_jwt_identity()
-        new_token = create_access_token(identity=current_user, fresh=True)
-        jti = get_jwt()['jti']
-        revoaked_token = BlocklistModel(
-            jti, 'new refresh token is now in the place of this.')
-        revoaked_token.save()
-        return {'access_token': new_token}
+        resp = TokenRefresh.refresh()
+        return resp
