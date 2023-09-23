@@ -3,6 +3,8 @@ import random
 import os
 from dotenv import load_dotenv
 import time
+from functools import wraps
+from flask import request
 load_dotenv()
 
 
@@ -17,7 +19,20 @@ def get_random_string(length):
     return safe_link
 
 
-# while True:
+def Permission_Required():
+    def wrapper(func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            auth = request.args
+            secret_Key = get_random_string(5)
+            if auth.get("passkey") == secret_Key:
+                return func(*args, **kwargs)
+            return {"Authentication": "Authentication Faild , please pass 'passkey' argument in header request."}, 403
+        return inner
+    return wrapper
+
+
+    # while True:
 base_api_secret_key = get_random_string(
     int(os.getenv("API_LOCKER_LENGHT")))
 # time.sleep(10)

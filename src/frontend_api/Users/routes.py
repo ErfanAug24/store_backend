@@ -1,14 +1,14 @@
 import datetime
-from flask import redirect, url_for, request, jsonify, make_response, render_template, Blueprint, flash
-from flask_jwt_extended import jwt_required, set_access_cookies, set_refresh_cookies, create_access_token
-from src.api.v1.resources.user import UserRegisterApi
+from flask import redirect, url_for, request, render_template, Blueprint, flash
+from flask_jwt_extended import jwt_required, set_access_cookies, set_refresh_cookies
+
 from src.logic.user import *
 from src.logic.error_handler.error_syntax import *
 blp = Blueprint('Users', __name__, template_folder="templates")
 
 
 @blp.route('/signup', methods=["GET", "POST"])
-def SignUp():
+def signup():
     if request.method == "POST":
         auth = request.form
         if auth and auth.get("password") == auth.get("repassword"):
@@ -24,7 +24,7 @@ def SignUp():
 
 
 @blp.route('/signin', methods=["GET", "POST"])
-def SignIn():
+def signin():
     if request.method == "POST":
         auth = request.form
         user = UserModel.find_by_username(auth.get("username"))
@@ -32,7 +32,8 @@ def SignIn():
             flash(ACCOUNT_REQUIRED, 'warning')
             return redirect(url_for("Users.SignUp"))
         if user and check_password_hash(user.password, auth.get("password")):
-            resp = redirect(url_for("Stores.home"))
+            resp = redirect(
+                url_for("Stores.home", current_user=True))
             result = UserLogin.login(auth)
             set_access_cookies(resp, result.get("access_token"))
             set_refresh_cookies(resp, result.get("refresh_token"))
@@ -64,4 +65,4 @@ def Account():
 
 @blp.route('/edit-account')
 def Edit_Account():
-    pass
+    return render_template("UerTemplates/Account.html")

@@ -1,11 +1,11 @@
-from flask import Flask
-from flask_jwt_extended import JWTManager
+from flask import Flask, render_template
 from flask_smorest import Api
 from src.db import db
 from src.schema import ma
-from flask_migrate import Migrate
 from src.email import mail
-from src.api.v1.models.blocklist import BlocklistModel
+from src.jwt_ob import jwt
+from src import config
+
 from src.api.v1.resources.user import blp as UserApiBlueprint
 from src.api.v1.resources.product import blp as ProductApiBlueprint
 from src.frontend_api.Users.routes import blp as UserBlueprint
@@ -13,35 +13,39 @@ from src.frontend_api.Store.routes import blp as StoreBlueprint
 # from src.rq_db import rq
 
 
-def create_app(configClass):
+def create_app():
     app = Flask(__name__, template_folder="templates")
-    app.config.from_object(configClass)
-    # setting api
+    app.config.from_object("src.config.Config")
+    app.config.from_object("src.config.Mail_Config")
+    app.config.from_object("src.config.JWT_Config")
+    app.config.from_object("src.config.API_Config")
+
+    register_extentions(app)
+    register_blueprints(app)
+
+    return app
+
+
+def register_extentions(app):
     api = Api(app)
-
-    # setting database
+    jwt.init_app(app)
     db.init_app(app)
-
-    # setting schema
     ma.init_app(app)
-
-    # setting mail
     mail.init_app(app)
-    # setting jwtmanager
-    jwt = JWTManager(app)
-    # setting redis and queue
-    # rq.init_app(app)
+    register_api(api)
 
-    # jwt decorators
 
-    @jwt.revoked_token_loader
-    def check_if_token_revoked(jwt_header, jwt_payload) -> bool:
-        jti = jwt_payload['jti']
-        token = BlocklistModel.find_by_jwtID(jti)
-        return token is not None
-    # setting api
-    api.register_blueprint(UserApiBlueprint)
-    api.register_blueprint(ProductApiBlueprint)
+def register_blueprints(app):
     app.register_blueprint(UserBlueprint)
     app.register_blueprint(StoreBlueprint)
-    return app
+
+
+def register_api(api):
+    api.register_blueprint(UserApiBlueprint)
+    api.register_blueprint(ProductApiBlueprint)
+
+
+def error_handeling(app):
+    @app.errorhandler(404)
+    def error_404(error):
+        return render_template("404.html"), 404

@@ -13,7 +13,8 @@ from flask_jwt_extended import (create_access_token,
                                 unset_access_cookies)
 from flask import jsonify
 import datetime
-from src.logic.error_handler.error_syntax import *
+from src.logic.message_responce.message_resp import *
+from src.logic.error_handler.error_syntax import Error_Syntaxts
 
 
 class UserRegisteration(UserModel):
@@ -21,7 +22,7 @@ class UserRegisteration(UserModel):
     def register(cls, user_json):
         user = cls.find_by_username(user_json.get("username"))
         if user:
-            return {'message': USER_CONFLICT}
+            return Error_Syntaxts(None, 409).detective()
 
         user = cls(user_json.get("username"),
                    user_json.get("email"),
@@ -65,7 +66,15 @@ class UserLogin(UserModel):
             refresh_token = create_refresh_token(identity=user.id)
             return {'access_token': access_token,
                     'refresh_token': refresh_token}
-        return {'message': PERMISSION}
+        return Error_Syntaxts(None, 401).detective()
+
+    @classmethod
+    def is_logged_in() -> bool:
+        return True if current_user else False
+
+    @classmethod
+    def get_current_logged_user():
+        return current_user if current_user else None
 
 
 class User(UserModel):
@@ -78,6 +87,8 @@ class User(UserModel):
         user = cls.find_by_id(user_id)
         user.delete()
         return {'message': USER_DELETE}
+    
+    
 
 
 class TokenRefresh:
@@ -91,4 +102,5 @@ class TokenRefresh:
         ttype = token['type']
         revoked_token = BlocklistModel(
             jti, 'new refresh token is now in the place of this.', identity, ttype)
+        revoked_token.save()
         return jsonify({'access_token': access_token})
